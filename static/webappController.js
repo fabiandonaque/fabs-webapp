@@ -24,7 +24,7 @@ window.addEventListener('load', () => {
 	touchable = "ontouchstart" in document.documentElement;
 	setWidthAndHeight();
 	dpr = window.devicePixelRatio;
-	postJSON({event:"load",width:width,height:height,dpr:dpr,touchableDevice:touchable},"/", response => {
+	postJSON({},"/api/apps/getAppsTree", response => {
 		console.log(response);
 	});
 	setWebApp();
