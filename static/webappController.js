@@ -4,7 +4,7 @@
 //  Imports  //
 ///////////////
 
-import { postJSON } from 'https://resources.fabsrobotics.com/js/utilities-v0.1.0.js';
+import { res,postJSON } from 'https://resources.fabsrobotics.com/js/utilities-v0.1.0.js';
 import { SplitView } from 'https://resources.fabsrobotics.com/js/modules/fabsModules-master.js';
 
 ////////////////////////
@@ -15,6 +15,7 @@ let touchable;
 let width;
 let height;
 let dpr;
+let treeApp;
 
 /////////////////
 //  Listeners  //
@@ -25,7 +26,10 @@ window.addEventListener('load', () => {
 	setWidthAndHeight();
 	dpr = window.devicePixelRatio;
 	postJSON({},"/api/apps/getAppsTree", response => {
-		console.log(response);
+		if(response.code == res.Ok){
+			treeApp = response.message;
+			console.log(treeApp);
+		}
 	});
 	setWebApp();
 });
@@ -56,36 +60,35 @@ function setWidthAndHeight(){
 }
 
 function setWebApp(){
+	// Contexto
 	let context = document.createElement("DIV");
 	context.style = `
 		width: var(--width);
 		height: var(--height);
 		background-color: blue;
 	`;
+	// skeleton
 	let splitView = new SplitView();
 	splitView.id = "webAppHeader";
-	splitView.size = Math.floor(height/2)+"px";
+	splitView.size = "100px";
 	splitView.separator = true;
-	let first = document.createElement("DIV");
-	let second = document.createElement("DIV");
-	first.style.backgroundColor = "yellow";
-	splitView.appendChild(first);
-	splitView.appendChild(second);
+	let header = document.createElement("DIV");
+	let contentView = document.createElement("DIV");
+	header.style.backgroundColor = "yellow";
+	// ContentView
+	
+	// Appends to document
+	splitView.appendChild(header);
+	splitView.appendChild(contentView);
 	context.appendChild(splitView);
 	document.body.appendChild(context);
-
-
-	// Control lines	
-	let top = document.createElement("DIV");
-	let bottom = document.createElement("DIV");
-	top.style = `position:absolute;top:0;left:0;width: var(--width); height: 1px; background-color: red;`;
-	bottom.style = `position:absolute;top:calc( var(--height) - 1px );left:0;width: var(--width); height: 1px; background-color: red;`;
-	document.body.appendChild(top);
-	document.body.appendChild(bottom);
 }
 
 function resizeWebApp(){
 	document.getElementById("webAppHeader").size = Math.floor(height/2)+"px";
+}
+
+function getAppsForList(obj){
 }
 
 // iPhone Safari Ok
