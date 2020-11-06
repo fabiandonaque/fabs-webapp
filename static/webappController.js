@@ -23,8 +23,11 @@ let treeApp;
 
 window.addEventListener('load', () => {
 	touchable = "ontouchstart" in document.documentElement;
-	setWidthAndHeight();
+	//setWidthAndHeight();
 	dpr = window.devicePixelRatio;
+	postJSON({event:"load",innerHeight:window.innerHeight,innerWidth:window.innerWidth,visualHeight: window.visualViewport.height,visualWidth: window.visualViewport.width},"/api/size", response => {
+		console.log(response);
+	});
 	postJSON({},"/api/apps/getAppsTree", response => {
 		if(response.code == res.Ok){
 			treeApp = response.message;
@@ -36,16 +39,18 @@ window.addEventListener('load', () => {
 
 window.addEventListener('resize', e => {
 	setWidthAndHeight();
-	resizeWebApp();
-	//postJSON({event:"resize",width:width,height:height,dpr:dpr,touchableDevice:touchable},"/",()=>{});
+	setTimeout(() => { setWidthAndHeight();},500);
+	postJSON({event:"resize",innerHeight:window.innerHeight,innerWidth:window.innerWidth,visualHeight: window.visualViewport.height,visualWidth: window.visualViewport.width, computedHeight: window.getComputedStyle(document.documentElement).getPropertyValue("height"),divHeight: window.getComputedStyle(document.getElementById("context")).getPropertyValue("height")},"/api/size", response => {
+		console.log(response);
+	});
 });
 
 window.addEventListener("orientationchange", () => {
-	setWidthAndHeight();
-	resizeWebApp();
-	/*postJSON({event:"orientationchange",height:height,width:width},"/", response => {
+	//setWidthAndHeight();
+	//resizeWebApp();
+	postJSON({event:"orientationchange",innerHeight:window.innerHeight,innerWidth:window.innerWidth,visualHeight: window.visualViewport.height,visualWidth: window.visualViewport.width},"/api/size", response => {
 		console.log(response);
-	});*/
+	});
 });
 
 /////////////////
@@ -53,39 +58,41 @@ window.addEventListener("orientationchange", () => {
 /////////////////
 
 function setWidthAndHeight(){
-	width = window.innerWidth;
-	height = window.innerHeight;
-	document.documentElement.style.setProperty('--height', `${height}px`);
-	document.documentElement.style.setProperty('--width', `${width}px`);
+	let heightText = parseInt(window.getComputedStyle(document.documentElement).getPropertyValue("height").slice(0,-2),10);
+	let widthText = parseInt(window.getComputedStyle(document.documentElement).getPropertyValue("width").slice(0,-2),10);
+	if(window.innerHeight != heightText){
+		document.documentElement.style.height = window.innerHeight+"px";
+		document.body.style.height = window.innerHeight+"px";
+	}
+	if(window.innerWidth != widthText) document.documentElement.style.width = window.innerWidth+"px";
 }
 
 function setWebApp(){
 	// Contexto
 	let context = document.createElement("DIV");
+	context.id = "context";
 	context.style = `
-		width: var(--width);
-		height: var(--height);
+		width: 100%;
+		height: 100%;
 		background-color: blue;
 	`;
 	// skeleton
-	let splitView = new SplitView();
-	splitView.id = "webAppHeader";
-	splitView.size = "100px";
-	splitView.separator = true;
 	let header = document.createElement("DIV");
-	let contentView = document.createElement("DIV");
+	header.style.height = "100px";
 	header.style.backgroundColor = "yellow";
+	let contentView = document.createElement("DIV");
+	contentView.style.height = "calc( 100% - 100px )";
+	contentView.style.backgroundColor = "red";
 	// ContentView
 	
 	// Appends to document
-	splitView.appendChild(header);
-	splitView.appendChild(contentView);
-	context.appendChild(splitView);
+	context.appendChild(header);
+	context.appendChild(contentView);
 	document.body.appendChild(context);
 }
 
 function resizeWebApp(){
-	document.getElementById("webAppHeader").size = Math.floor(height/2)+"px";
+	//document.getElementById("webAppHeader").size = Math.floor(height/2)+"px";
 }
 
 function getAppsForList(obj){
