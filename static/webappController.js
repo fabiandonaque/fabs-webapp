@@ -1,3 +1,9 @@
+/*
+	Created by:		Fabián Doñaque
+	Copyright by:	Fabs Robotics SLU
+	Created on:		2020-11-04
+*/
+
 'use strict';
 
 ///////////////
@@ -68,7 +74,7 @@ function setWidthAndHeight(){
 }
 
 function setWebApp(){
-	// Contexto
+	/*/ Contexto
 	let context = document.createElement("DIV");
 	context.id = "context";
 	context.style = `
@@ -76,19 +82,27 @@ function setWebApp(){
 		height: 100%;
 		background-color: blue;
 	`;
+
 	// skeleton
 	let header = document.createElement("DIV");
-	header.style.height = "100px";
+	header.style.height = "75px";
 	header.style.backgroundColor = "yellow";
 	let contentView = document.createElement("DIV");
-	contentView.style.height = "calc( 100% - 100px )";
+	contentView.style.height = "calc( 100% - 75px )";
 	contentView.style.backgroundColor = "red";
+
 	// ContentView
+	let list = document.createElement("DIV");
+	list.style= ` display: inline-block; width: 300px; height: 100%; background-color: green;`;
+	let appView = document.createElement("DIV");
+	appView.style = `display: inline-block;width: calc( 100% - 300px ); height: 100%; background-color: purple;`;
 	
 	// Appends to document
+	contentView.appendChild(list);
+	contentView.appendChild(appView);
 	context.appendChild(header);
 	context.appendChild(contentView);
-	document.body.appendChild(context);
+	document.body.appendChild(context);*/
 }
 
 function resizeWebApp(){
